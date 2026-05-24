@@ -13,22 +13,17 @@ export const [appMode, setAppMode] = createSignal<AppMode>(savedMode || 'music')
 
 export function switchAppMode(mode: AppMode) {
   if (mode === appMode()) return;
-  setAppMode(mode);
-  localStorage.setItem('appMode', mode);
-
-  // 重置 nav state
+  // Reset all nav states first
   setNavStore('search', 'state', false);
   setNavStore('library', 'state', false);
   setNavStore('queue', 'state', false);
   setNavStore('player', 'state', false);
   setNavStore('list', 'state', false);
-
-  // 影片模式下自動打開 search
-  if (mode === 'video') {
-    setTimeout(() => {
-      setNavStore('search', 'state', true);
-    }, 50);
-  }
+  // Then switch mode
+  setAppMode(mode);
+  localStorage.setItem('appMode', mode);
+  // Then open search after a tick
+  setTimeout(() => setNavStore('search', 'state', true), 50);
 }
 
 const storeInit: {
@@ -41,7 +36,7 @@ const storeInit: {
   locale: string,
   translations: Record<TranslationKeys, string> | {}
 } = {
-  api: import.meta.env.DEV ? '' : 'https://api.ytify.workers.dev',
+  api: '',
   useSaavn: true,
   locale: initLocale,
   translations: {},
