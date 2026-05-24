@@ -2,7 +2,7 @@ import { onMount, Show, lazy } from "solid-js";
 import './Search.css';
 import Results from './Results';
 import Input from "./Input";
-import { searchStore, t, navStore, setNavStore } from "@stores";
+import { searchStore, t, navStore, setNavStore, appMode } from "@stores";
 import Filters from "./Filters";
 
 const About = lazy(() => import('./About'));
@@ -26,7 +26,7 @@ export default function() {
   return (
     <section class="search" ref={searchRef}>
       <header class="sticky-bar">
-        <p>{t('nav_search')}</p>
+        <p>{appMode() === 'video' ? '影片搜尋' : t('nav_search')}</p>
 
         <div class="right-group">
           <Show when={!matchMedia('(display-mode: standalone)').matches}>
@@ -48,7 +48,9 @@ export default function() {
 
       <form class="superInputContainer">
         <Input />
-        <Filters />
+        <Show when={appMode() !== 'video'}>
+          <Filters />
+        </Show>
       </form>
 
       <Show when={searchStore.query || searchStore.results.length > 0} fallback={<About />}>

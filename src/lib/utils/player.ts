@@ -1,4 +1,4 @@
-import { playerStore, setPlayerStore, setStore, store } from "@stores";
+import { playerStore, setPlayerStore, setStore, setNavStore, store, appMode } from "@stores";
 import { config, convertSStoHHMMSS } from "@utils";
 
 let playerAbortController: AbortController;
@@ -10,6 +10,17 @@ export async function player(id?: string) {
   playerAbortController = new AbortController();
 
   if (!id) return;
+
+  const isVideoMode = appMode() === 'video';
+  if (isVideoMode) {
+    setPlayerStore('isWatching', true);
+    setPlayerStore('isMusic', false);
+  }
+
+  // 影片模式下自動打開 player
+  if (isVideoMode) {
+    setNavStore('player', 'state', true);
+  }
 
   const enforceVideo = !playerStore.isMusic && playerStore.isWatching;
 
