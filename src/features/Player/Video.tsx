@@ -166,8 +166,17 @@ export default function() {
         <select
           ref={selector}
           onchange={_ => {
-            video.src = proxyHandler(_.target.value, true);
-            video.currentTime = playerStore.audio.currentTime;
+            const newSrc = proxyHandler(_.target.value, true);
+            const wasPlaying = !video.paused;
+            const currentTime = video.currentTime;
+            video.src = newSrc;
+            video.currentTime = currentTime;
+            if (wasPlaying) {
+              video.play().then(() => {
+                if (!playerStore.audio.paused)
+                  playerStore.audio.currentTime = currentTime;
+              });
+            }
             if (config.watchMode)
               setConfig('watchMode', _.target.selectedOptions[0].textContent as string);
           }}

@@ -1,7 +1,7 @@
 import { Accessor, Show, createSignal } from 'solid-js';
 import './StreamItem.css';
 import { config, hostResolver, player, removeFromCollection, getCollectionItems, generateImageUrl } from '@utils';
-import { setStore, store, setQueueStore, listStore, navStore, setNavStore, playerStore, setPlayerStore, appMode } from '@stores';
+import { setStore, store, setQueueStore, listStore, navStore, setNavStore, playerStore, setPlayerStore } from '@stores';
 
 export default function(data: YTItem & {
   draggable?: boolean,
@@ -120,13 +120,9 @@ export default function(data: YTItem & {
           });
 
 
-          const isVideoMode = appMode() === 'video';
           const isPortrait = matchMedia('(orientation:portrait)').matches;
 
-          if (isVideoMode) {
-            setNavStore('player', 'state', true);
-            navStore.player.ref?.scrollIntoView();
-          } else if (isPortrait || config.landscapeSections === '1') {
+          if (isPortrait || config.landscapeSections === '1') {
             setNavStore('player', 'state', Boolean(config.watchMode));
             if (config.watchMode)
               navStore.player.ref?.scrollIntoView();

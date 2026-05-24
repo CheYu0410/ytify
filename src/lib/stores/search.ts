@@ -1,6 +1,6 @@
 import { createStore } from 'solid-js/store';
 import { config, drawer, setDrawer } from '@utils';
-import { updateParam, setStore, store, appMode } from '@stores';
+import { updateParam, setStore, store } from '@stores';
 
 const createInitialState = () => ({
   query: '',
@@ -91,11 +91,7 @@ export async function getSearchResults(force = false) {
     setDrawer('recentSearches', recentSearches);
   }
 
-  // 影片模式下強制搜尋影片類型
-  const isVideoMode = appMode() === 'video';
-  const effectiveFilter = isVideoMode ? 'relevance' : searchFilter;
-
-  const url = `${store.api}/search?q=${encodeURIComponent(query)}&f=${effectiveFilter}`;
+  const url = `${store.api}/search?q=${encodeURIComponent(query)}&f=${searchFilter}`;
 
   fetch(url)
     .then(res => res.json() as Promise<(YTItem | YTListItem)[]>)
@@ -111,5 +107,5 @@ export async function getSearchResults(force = false) {
     });
 
   updateParam('q', query);
-  updateParam('f', effectiveFilter === 'all' ? '' : effectiveFilter);
+  updateParam('f', searchFilter === 'all' ? '' : searchFilter);
 }

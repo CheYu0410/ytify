@@ -1,30 +1,8 @@
-import { createSignal } from "solid-js";
 import { config } from "../utils/config";
 import { createStore } from "solid-js/store";
-import { setNavStore } from "./navigation";
 
 const nl = navigator.language.slice(0, 2);
 const initLocale = config.language || (Locales.includes(nl) ? nl : 'en');
-
-export type AppMode = 'music' | 'video';
-
-const savedMode = localStorage.getItem('appMode') as AppMode | null;
-export const [appMode, setAppMode] = createSignal<AppMode>(savedMode || 'music');
-
-export function switchAppMode(mode: AppMode) {
-  if (mode === appMode()) return;
-  // Reset all nav states first
-  setNavStore('search', 'state', false);
-  setNavStore('library', 'state', false);
-  setNavStore('queue', 'state', false);
-  setNavStore('player', 'state', false);
-  setNavStore('list', 'state', false);
-  // Then switch mode
-  setAppMode(mode);
-  localStorage.setItem('appMode', mode);
-  // Then open search after a tick
-  setTimeout(() => setNavStore('search', 'state', true), 50);
-}
 
 const storeInit: {
   useSaavn: boolean,
