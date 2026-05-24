@@ -11,6 +11,9 @@ import path from 'path';
 
 export default defineConfig(({ command }) => ({
   base: process.env.VITE_BASE_PATH || '/',
+  server: {
+    allowedHosts: ['ytify.cheyuyu.com', 'localhost'],
+  },
   define: {
     Locales: readdirSync(resolve(__dirname, './src/locales')).map(file => file.slice(0, 2)),
     Build: JSON.stringify('v' + require('./package.json').version),

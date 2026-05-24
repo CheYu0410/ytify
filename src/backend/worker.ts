@@ -16,8 +16,10 @@ const ALLOWED_ORIGINS = [
   'https://ytify-zeta.vercel.app',
   'https://ytify-legacy.vercel.app',
   'https://ytify-2nx7.onrender.com',
+  'https://ytify.cheyuyu.com',
   'http://localhost:3000',
-  'http://localhost:5173'
+  'http://localhost:5173',
+  'http://localhost:4534'
 ];
 
 export interface Env {

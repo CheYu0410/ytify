@@ -34,6 +34,12 @@
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
+  <script>
+    // Unregister any cached service workers (fixes stale PWA cache)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+    }
+  </script>
   <script src="/src/index.tsx" type="module"></script>
 </body>
 
