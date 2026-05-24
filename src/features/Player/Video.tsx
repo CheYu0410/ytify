@@ -39,32 +39,40 @@ export default function() {
     const hasVp9 = data.adaptiveFormats.find(v => v.type?.includes('vp9'))?.url;
 
     video.currentTime = playerStore.audio.currentTime;
-    setData({
-      video: data.adaptiveFormats
-        .filter(f => {
-          if (!f.type.startsWith('video')) return false;
-          const av1 = hasAv1 && supportsAv1 && f.type?.includes('av01');
-          if (av1) return true;
-          const vp9 = !hasAv1 && f.type?.includes('vp9');
-          if (vp9) return true;
-          const avc = !hasVp9 && f.type?.includes('avc1');
-          if (avc) return true;
-          return false;
-        })
-        .map(f => ([f.resolution || f.quality, f.url])),
-      captions: data.captions.map(c => ({
-        ...c,
-        url: playerStore.proxy + c.url
-      }))
-    });
 
     if (video.src) {
       video.src = '';
       video.pause();
     }
     delete video.dataset.retried;
-    if (savedQ)
-      video.src = proxyHandler(selector.value, true);
+
+    const videoList = data.adaptiveFormats
+      .filter(f => {
+        if (!f.type.startsWith('video')) return false;
+        const av1 = hasAv1 && supportsAv1 && f.type?.includes('av01');
+        if (av1) return true;
+        const vp9 = !hasAv1 && f.type?.includes('vp9');
+        if (vp9) return true;
+        const avc = !hasVp9 && f.type?.includes('avc1');
+        if (avc) return true;
+        return false;
+      })
+      .map(f => ([f.resolution || f.quality, f.url]));
+
+    setData({
+      video: videoList,
+      captions: data.captions.map(c => ({
+        ...c,
+        url: playerStore.proxy + c.url
+      }))
+    });
+
+    // Auto-select best video format
+    if (videoList.length > 0) {
+      const preferred = savedQ ? videoList.find(v => v[0] === savedQ) : null;
+      const selected = preferred || videoList[videoList.length - 1];
+      video.src = proxyHandler(selected[1], true);
+    }
 
   });
 
